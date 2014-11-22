@@ -13,42 +13,42 @@ var toggler = {
 			}
 		}
 		
-//		function Opener(){
-//			this.content = setOpenerContent(this);
-//			this.status = '';
-//		}
-		
 		for (var i = 0; i < openers.length; i++){
 			openers[i].content = setOpenerContent(openers[i]);
 			openers[i].status = openers[i].getAttribute('data-tgl-status');
+			openers[i].onclick = function(){
+				toggler.slide(this.content);
+			};
 		}
-		
-		openers[0].onclick = function(){
-			toggler.slide(this.content);
-		}
-
-//		toggler.slide(openers[0].content);
 	},
 	
 	slide: function(box){
 		var cssOverflowValue = window.getComputedStyle(box).getPropertyValue('overflow');
 		var boxHeight = box.offsetHeight;
-		var animationStep = 10;
+		var animationStep = 10; // pixels for each animation step
+		var animationSpeed = 1000; // miliseconds for each animation step
+		var animation;
 		
 		if (cssOverflowValue != 'hidden'){
 			box.style.overflow = 'hidden';
 		}
 		
-		
-		while (boxHeight > 0){
-//			setTimeout(function(){
+		(function handleAnimation(){
+			if (boxHeight > 0){
 				box.style.height = boxHeight + 'px';
 				boxHeight -= animationStep;
 
 				if (boxHeight < animationStep)
 					box.style.height = '0';
-//			}, 100);
-		}
+			}
+			else{
+				cancelAnimationFrame(45);
+				console.log(animation);
+				box.style.display = 'none';
+				box.style.overflow = cssOverflowValue;
+			}
+			animation = requestAnimationFrame(handleAnimation);
+		})();
 	}
 };
 window.addEventListener('load', function(){
