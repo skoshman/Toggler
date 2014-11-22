@@ -22,26 +22,33 @@ var toggler = {
 			openers[i].content = setOpenerContent(openers[i]);
 			openers[i].status = openers[i].getAttribute('data-tgl-status');
 		}
+		
+		openers[0].onclick = function(){
+			toggler.slide(this.content);
+		}
 
-		toggler.slide(openers[0].content);
+//		toggler.slide(openers[0].content);
 	},
 	
 	slide: function(box){
-		var initialHeight = box.offsetHeight;
-		box.style.height = initialHeight;
+		var cssOverflowValue = window.getComputedStyle(box).getPropertyValue('overflow');
+		var boxHeight = box.offsetHeight;
+		var animationStep = 10;
 		
-		while (initialHeight > 0){
-			box.style.height = initialHeight;
-			console.log(initialHeight, box.style.height);
-			initialHeight = initialHeight - 10;
-			
+		if (cssOverflowValue != 'hidden'){
+			box.style.overflow = 'hidden';
 		}
+		
+		
+		while (boxHeight > 0){
+//			setTimeout(function(){
+				box.style.height = boxHeight + 'px';
+				boxHeight -= animationStep;
 
-//		for (var i = 0; i < 10; i++){
-//			console.log(i, initialHeight);
-//			box.style.height = initialHeight - 10;
-//			initialHeight = initialHeight - 10;
-//		}
+				if (boxHeight < animationStep)
+					box.style.height = '0';
+//			}, 100);
+		}
 	}
 };
 window.addEventListener('load', function(){
