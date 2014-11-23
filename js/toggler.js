@@ -42,10 +42,10 @@ var toggler = {
 					box.style.height = '0';
 			}
 			else{
-				cancelAnimationFrame(45);
-				console.log(animation);
+				cancelAnimationFrame(animation);
 				box.style.display = 'none';
 				box.style.overflow = cssOverflowValue;
+				return;
 			}
 			animation = requestAnimationFrame(handleAnimation);
 		})();
