@@ -17,38 +17,43 @@ var toggler = {
 			openers[i].content = setOpenerContent(openers[i]);
 			openers[i].status = openers[i].getAttribute('data-tgl-status');
 			openers[i].onclick = function(){
-				toggler.slide(this.content);
+				toggler.slide(this.content, this);
 			};
 		}
 	},
 	
-	slide: function(box){
-		var cssOverflowValue = window.getComputedStyle(box).getPropertyValue('overflow');
-		var boxHeight = box.offsetHeight;
+	slide: function(boxContent, boxOpener){
+		var cssOverflowValue = window.getComputedStyle(boxContent).getPropertyValue('overflow');
+		var boxContentHeight = boxContent.offsetHeight;
 		var animationStep = 10; // pixels for each animation step
 		var animationSpeed = 1000; // miliseconds for each animation step
 		var animation;
 		
 		if (cssOverflowValue != 'hidden'){
-			box.style.overflow = 'hidden';
+			boxContent.style.overflow = 'hidden';
 		}
 		
-		(function handleAnimation(){
-			if (boxHeight > 0){
-				box.style.height = boxHeight + 'px';
-				boxHeight -= animationStep;
+		if (boxOpener.status == 'opened'){
+			(function handleAnimation(){
+				if (boxContentHeight > 0){
+					boxContent.style.height = boxContentHeight + 'px';
+					boxContentHeight -= animationStep;
 
-				if (boxHeight < animationStep)
-					box.style.height = '0';
-			}
-			else{
-				cancelAnimationFrame(animation);
-				box.style.display = 'none';
-				box.style.overflow = cssOverflowValue;
-				return;
-			}
-			animation = requestAnimationFrame(handleAnimation);
-		})();
+					if (boxContentHeight < animationStep)
+						boxContent.style.height = '0';
+				}
+				else{
+					cancelAnimationFrame(animation);
+					boxContent.style.display = 'none';
+					boxContent.style.overflow = cssOverflowValue;
+					return;
+				}
+
+				animation = requestAnimationFrame(handleAnimation);
+			})();
+		} else if (boxOpener.status == 'closed'){
+			console.log(boxOpener.status);
+		}
 	}
 };
 window.addEventListener('load', function(){
