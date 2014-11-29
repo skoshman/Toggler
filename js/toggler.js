@@ -1,11 +1,15 @@
 "use strict";
 
+//gets opener DOM element
+//returns DOM element is binded to this opener as a box to be toggled
 function bindContent(opener){
 	var key = opener.getAttribute('data-tgl-for');
 	var contentNodes = document.querySelectorAll('[data-tgl-id]');
 	var flag = false;
 	var i = 0;
 	
+	//meant only one element in the document could be recognized as content
+	//if there are more elements apper only the first one is binded
 	while (!flag){
 		if (contentNodes[i].getAttribute('data-tgl-id') === key){
 			flag = true;
@@ -15,8 +19,10 @@ function bindContent(opener){
 	}
 }
 
+//checks if content is shown or not
+//true - content is shown
+//false - content is hidden
 function getStatus(content){
-	console.log(content.className);
 	if (content.className.indexOf('tgl-hide') !== -1){
 		return false;
 	}
@@ -25,16 +31,25 @@ function getStatus(content){
 	}
 }
 
+//define Class for Toggler instances
 function TogglerItem(opener){
 	this.opener = opener;
 	this.content = bindContent(opener);
 	this.status = getStatus(this.content);
 }
 
+//initialization
 function init(){
-	var heading = document.querySelector('[data-tgl-for="dropdown"]');
-	var node = new TogglerItem(heading);
-	console.log(node);
+	var openers = document.querySelectorAll('[data-tgl-for]');
+	var nodes = [];
+	
+	for (var i in openers){
+		if (typeof openers[i] === 'object' || openers[i].nodeType === 1){
+			nodes[i] = new TogglerItem(openers[i]);
+		}
+	}
+	
+	console.log(nodes);
 }
 
 window.addEventListener('load', init);
