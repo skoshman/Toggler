@@ -1,61 +1,40 @@
-var toggler = {
-	init: function(){
-		var openers = document.querySelectorAll('[data-tgl-for]');
-		
-		function setOpenerContent(opener){
-			var contentNodes = document.querySelectorAll('[data-tgl-id]');
-			var contentId = opener.getAttribute('data-tgl-for');
-			
-			for (var i = 0; i < contentNodes.length; i++){
-				if (contentNodes[i].getAttribute('data-tgl-id') == contentId){
-					return contentNodes[i];
-				}
-			}
-		}
-		
-		for (var i = 0; i < openers.length; i++){
-			openers[i].content = setOpenerContent(openers[i]);
-			openers[i].status = openers[i].getAttribute('data-tgl-status');
-			openers[i].onclick = function(){
-				toggler.slide(this.content, this);
-			};
-		}
-	},
+"use strict";
+
+function bindContent(opener){
+	var key = opener.getAttribute('data-tgl-for');
+	var contentNodes = document.querySelectorAll('[data-tgl-id]');
+	var flag = false;
+	var i = 0;
 	
-	slide: function(boxContent, boxOpener){
-		var cssOverflowValue = window.getComputedStyle(boxContent).getPropertyValue('overflow');
-		var boxContentHeight = boxContent.offsetHeight;
-		var animationStep = 10; // pixels for each animation step
-		var animationSpeed = 1000; // miliseconds for each animation step
-		var animation;
-		
-		if (cssOverflowValue != 'hidden'){
-			boxContent.style.overflow = 'hidden';
+	while (!flag){
+		if (contentNodes[i].getAttribute('data-tgl-id') === key){
+			flag = true;
+			return contentNodes[i];
 		}
-		
-		if (boxOpener.status == 'opened'){
-			(function handleAnimation(){
-				if (boxContentHeight > 0){
-					boxContent.style.height = boxContentHeight + 'px';
-					boxContentHeight -= animationStep;
-
-					if (boxContentHeight < animationStep)
-						boxContent.style.height = '0';
-				}
-				else{
-					cancelAnimationFrame(animation);
-					boxContent.style.display = 'none';
-					boxContent.style.overflow = cssOverflowValue;
-					return;
-				}
-
-				animation = requestAnimationFrame(handleAnimation);
-			})();
-		} else if (boxOpener.status == 'closed'){
-			console.log(boxOpener.status);
-		}
+		i++;
 	}
-};
-window.addEventListener('load', function(){
-	toggler.init();
-});
+}
+
+function getStatus(content){
+	console.log(content.className);
+	if (content.className.indexOf('tgl-hide') !== -1){
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+function TogglerItem(opener){
+	this.opener = opener;
+	this.content = bindContent(opener);
+	this.status = getStatus(this.content);
+}
+
+function init(){
+	var heading = document.querySelector('[data-tgl-for="dropdown"]');
+	var node = new TogglerItem(heading);
+	console.log(node);
+}
+
+window.addEventListener('load', init);
